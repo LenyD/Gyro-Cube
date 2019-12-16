@@ -9,6 +9,8 @@ public class BtActions:MonoBehaviour
     public Text levelId;//Level # Textfield
     public Animation a;//Transition animation
     public GameObject vicPopUp;//Victory pop up
+    public Animator stuckText;
+    public MenuButtons levelList;
     void Awake() {
         if(levelId!=null){
             //If there is a Text linked
@@ -18,6 +20,7 @@ public class BtActions:MonoBehaviour
             string id = sceneName.Substring(5);
             levelId.text = "#"+id;
             currentId = int.Parse(id);
+            stuckText.speed = 0;
         }
     }
 
@@ -67,6 +70,24 @@ public class BtActions:MonoBehaviour
     }
     public void closeGame(){
         //Called from button in main menu scene
+        StartCoroutine(quit());
+    }
+    IEnumerator quit(){
+        //Go to menu after transition
+        a.PlayQueued("CloseScene");
+        yield return new WaitForSeconds(1f);
         Application.Quit();
+    }
+
+    public void resetProgress() {
+        //Called from scene button
+        SaveManager.resetProgress();
+        StartCoroutine(toMenu());
+        //levelList.refreshList();
+    }
+    public void showStuckText(){
+        if(stuckText!=null){
+            stuckText.speed = 1;
+        }
     }
 }

@@ -13,21 +13,18 @@ public class MenuButtons : MonoBehaviour
     float y = -100;//height
     float margin = 100;//Margin
     int nbBtPerRow = 5;//Number of button per row
+    int levelPerPage = 24;
     RectTransform rt;
     Animation transition;
-
+    public int currentPage = 1;
+    public GameObject prev,next;
     void Start()
     {
         transition = GameObject.Find("Transition").GetComponent<Animation>();
         rt = GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(rt.sizeDelta.x,Mathf.Round(nbLevel/nbBtPerRow)*y*-1+(margin*2));
+        rt.sizeDelta = new Vector2(rt.sizeDelta.x,600);
         //Set up the level list
-        for (int i = 1; i <= nbLevel; i++)
-        {
-            //Create every button and position them on the grid
-            createButton((i-1)%nbBtPerRow*x+margin ,Mathf.RoundToInt((i-1)/nbBtPerRow)*y-margin,i);
-        }
-        SaveManager.isLevelCompleted(5);
+        refreshList(currentPage);
     }
     void createButton(float x, float y,int id){
         //Instantiate  button and set it up with the events
@@ -36,7 +33,7 @@ public class MenuButtons : MonoBehaviour
         newBt.GetComponentInChildren<Text>().text = id.ToString();
         newBt.transform.SetParent(this.transform);
         newBt.transform.localScale = new Vector3(1,1,1);
-        newBt.transform.localPosition = new Vector3(x,y,0);
+        newBt.transform.localPosition = new Vector3(x,y,-1);
         newBt.onClick.AddListener(delegate {loadLevel(id);});
         newBt.transform.rotation = transform.parent.transform.rotation;
         //Hide a check if the level is not completed according to the saveFile
@@ -51,12 +48,55 @@ public class MenuButtons : MonoBehaviour
         transition.PlayQueued("CloseScene");
         yield return new WaitForSeconds(1f);
         Stat.resetAll();
-        SceneManager.LoadScene("Level"+levelNumber);
+        try{
+            SceneManager.LoadScene("Level"+levelNumber);
+
+        }catch(UnityException e){
+            SceneManager.LoadScene("Menu");
+        }
+    }
+    void showPrevPageBt(){
+        prev.SetActive(true);
+    }
+    void showNextPageBt(){
+        next.SetActive(true);
+    }
+    public void showPrevPage(){
+        currentPage--;
+        refreshList(currentPage);
+    }
+    public void showNextPage(){
+        currentPage++;
+        refreshList(currentPage);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void refreshList(int page = 1){
+        foreach (Button b in btList)
+        {
+            Destroy(b.gameObject);
+        }
+        prev.SetActive(false);
+        next.SetActive(false);
+        btList = new List<Button>();
+        int i = 2;
+        int mod = page - 1;
+        if(page==1){
+            i=1;
+        }else{
+            showPrevPageBt();
+        }
+        if(nbLevel>page*levelPerPage+1){
+            showNextPageBt();
+        }
+        while ( i <= levelPerPage)
+        {
+            int id =i+(page*levelPerPage)-(levelPerPage)-mod;
+            
+            //Create every button and position them on the grid
+            if(id <= nbLevel){
+                createButton((i-1)%nbBtPerRow*x+margin ,Mathf.RoundToInt((i-1)/nbBtPerRow)*y-margin,id);
+            }
+            i++;
+        }
     }
 }

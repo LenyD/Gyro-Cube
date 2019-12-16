@@ -56,9 +56,10 @@ public static class Stat
         //getter
         return currentCoin;
     }
-    public static void incrementNumberOfMoves(){
+    public static int incrementNumberOfMoves(){
         //Increment the number of move after every rotation
         numberOfMoves++;
+        return numberOfMoves;
     }
     public static void resetNumberOfMoves(){
         //Reset number of move

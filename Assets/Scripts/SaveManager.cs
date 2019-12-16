@@ -13,7 +13,9 @@ public static class SaveManager
             return;
         }
         File.AppendAllText(path,n.ToString()+"\n");
-   
+    }
+    public static void resetProgress(){
+        File.Create(path).Close();
     }
     public static StreamReader reader;
     public static bool isLevelCompleted(int n){

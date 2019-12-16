@@ -11,17 +11,19 @@ public class FlipCube : MonoBehaviour
     mpStart, mpStop;//Mouse position on down and up
     List<Gravity> gravCubes = new List<Gravity>();//List of every gravcubes and antigrav cube
     bool isRotating = false, isAbleToRotate = false, isClicked = false;
-    public float rotSpeed =30f;//Rotation speed
+    float rotSpeed =10f;//Rotation speed
     int nextRotation = -1;//Next rotation id from predefinedRot, -1 is none
     Renderer rend;
     ParticleSystem touch;//Touch feed back prefab
     Transform container,arrow,clockwise;//Child object that need to be transformed
     public Vector2 tiling = new Vector2(5,5);//Number of subdivision in the mat
     Vector2 res;//Resolution to move the touch feedback at the right place
+    BtActions UIManager;
     private void Awake() {
         Stat.resetAll();//Reset stats
         //Get object and childs from the scene
         touch = GameObject.Find("Touch").GetComponent<ParticleSystem>();
+        UIManager = GameObject.Find("ButtonActionController").GetComponent<BtActions>();
         arrow = touch.gameObject.transform.Find("arrow");
         clockwise = touch.gameObject.transform.Find("clock");
         res = new Vector3(Screen.width,Screen.height,0);
@@ -215,7 +217,9 @@ public class FlipCube : MonoBehaviour
         //Set the target rotation to start the fixed update rotation
         isRotating = true;
         isAbleToRotate = false;
-        Stat.incrementNumberOfMoves();
+        if(Stat.incrementNumberOfMoves()==50){
+            UIManager.showStuckText();
+        }
         targetRot+= rot;
     }
 }
