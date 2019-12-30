@@ -3539,6 +3539,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1131743741}
     m_Modifications:
+    - target: {fileID: 4998318059483900697, guid: 3de5f52bfc9f3d34ab3ff2679e6f10a2,
+        type: 3}
+      propertyPath: m_Name
+      value: Gravity
+      objectReference: {fileID: 0}
     - target: {fileID: 4998318059483900696, guid: 3de5f52bfc9f3d34ab3ff2679e6f10a2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3594,11 +3599,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4998318059483900697, guid: 3de5f52bfc9f3d34ab3ff2679e6f10a2,
-        type: 3}
-      propertyPath: m_Name
-      value: Gravity
-      objectReference: {fileID: 0}
     - target: {fileID: 4998318059483900692, guid: 3de5f52bfc9f3d34ab3ff2679e6f10a2,
         type: 3}
       propertyPath: m_Mass
@@ -3613,11 +3613,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1131743741}
     m_Modifications:
-    - target: {fileID: 8953451966376719526, guid: bc0930cac9654904e842956a3b8536e8,
-        type: 3}
-      propertyPath: m_Name
-      value: Goal
-      objectReference: {fileID: 0}
     - target: {fileID: 8953451966376719525, guid: bc0930cac9654904e842956a3b8536e8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3676,17 +3671,22 @@ PrefabInstance:
     - target: {fileID: 8953451966376719525, guid: bc0930cac9654904e842956a3b8536e8,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.2
+      value: 0.195
       objectReference: {fileID: 0}
     - target: {fileID: 8953451966376719525, guid: bc0930cac9654904e842956a3b8536e8,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.2
+      value: 0.195
       objectReference: {fileID: 0}
     - target: {fileID: 8953451966376719525, guid: bc0930cac9654904e842956a3b8536e8,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.2
+      value: 0.195
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953451966376719526, guid: bc0930cac9654904e842956a3b8536e8,
+        type: 3}
+      propertyPath: m_Name
+      value: Goal
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc0930cac9654904e842956a3b8536e8, type: 3}

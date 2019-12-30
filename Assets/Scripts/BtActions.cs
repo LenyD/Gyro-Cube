@@ -11,6 +11,8 @@ public class BtActions:MonoBehaviour
     public GameObject vicPopUp;//Victory pop up
     public Animator stuckText;
     public MenuButtons levelList;
+    bool isTransitionning = false;
+    GameObject currentPopUp;
     void Awake() {
         if(levelId!=null){
             //If there is a Text linked
@@ -26,6 +28,10 @@ public class BtActions:MonoBehaviour
 
     public void resetScene() {
         //Called from scene button
+        if(isTransitionning){
+            return;
+        }
+        isTransitionning = true;
         StartCoroutine(reset());
     }
     IEnumerator reset(){
@@ -38,6 +44,10 @@ public class BtActions:MonoBehaviour
     }
     public void nextLevel() {
         //Called from scene button
+        if(isTransitionning){
+            return;
+        }
+        isTransitionning = true;
         StartCoroutine(next());
     }
     IEnumerator next(){
@@ -55,6 +65,10 @@ public class BtActions:MonoBehaviour
 
     public void toMenuScene() {
         //Called from scene button
+        if(isTransitionning){
+            return;
+        }
+        isTransitionning = true;
         StartCoroutine(toMenu());
     }
     IEnumerator toMenu(){
@@ -66,9 +80,13 @@ public class BtActions:MonoBehaviour
     }
     public void victory(){
         //Enable the victory pop up with the next level button
-        vicPopUp.SetActive(true);
+        showPopUp(vicPopUp);
     }
     public void closeGame(){
+        if(isTransitionning){
+            return;
+        }
+        isTransitionning = true;
         //Called from button in main menu scene
         StartCoroutine(quit());
     }
@@ -89,5 +107,19 @@ public class BtActions:MonoBehaviour
         if(stuckText!=null){
             stuckText.speed = 1;
         }
+    }
+    public void showPopUp(GameObject popUp){
+        if(currentPopUp != null){
+            currentPopUp.SetActive(false);
+        }
+        currentPopUp = popUp;
+        popUp.SetActive(true);
+    }
+    public void hidePopUp(GameObject popUp){
+        if(currentPopUp != null){
+            currentPopUp.SetActive(false);
+        }
+        currentPopUp = popUp;
+        popUp.SetActive(false);
     }
 }

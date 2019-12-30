@@ -12,7 +12,9 @@ public class FlipCube : MonoBehaviour
     List<Gravity> gravCubes = new List<Gravity>();//List of every gravcubes and antigrav cube
     bool isRotating = false, isAbleToRotate = false, isClicked = false;
     float rotSpeed =10f;//Rotation speed
-    int nextRotation = -1;//Next rotation id from predefinedRot, -1 is none
+    int nextRotation = -1,//Next rotation id from predefinedRot, -1 is none
+    horizontalSection,verticalSection;
+
     Renderer rend;
     ParticleSystem touch;//Touch feed back prefab
     Transform container,arrow,clockwise;//Child object that need to be transformed
@@ -118,6 +120,9 @@ public class FlipCube : MonoBehaviour
                         break;
                     }
                 }
+                if(gravCubes.Count == 0){
+                    isAbleToRotate = true;
+                }
             }
         }
         //Set nextRotation to -1 after sending it
@@ -127,6 +132,106 @@ public class FlipCube : MonoBehaviour
     int getSwipeInput(){
         //Analyse swipe direction and return it to nextRotation
         int dir=-1;
+        if(Input.GetMouseButtonDown(0)){
+            //On click down get start position ans move touch feedback
+            mpStart= Input.mousePosition;
+            res = new Vector3(Screen.width,Screen.height,0);
+            isClicked = true;
+            Vector3 newPos = mpStart/res;
+            //Set touch particle position to ratio with deformation
+            newPos.x*=10.6f;
+            newPos.y*=6;
+            newPos += new Vector3(-5.3f,-3,-4f);
+            horizontalSection = Mathf.RoundToInt(newPos.x/Mathf.Abs(newPos.x));
+            verticalSection = Mathf.RoundToInt(newPos.y/Mathf.Abs(newPos.y));
+            if(Mathf.Abs(newPos.x)>Mathf.Abs(newPos.y)){
+                if(Mathf.Abs(newPos.y)<1.5f){
+                    verticalSection = 0;
+                }
+            }
+            if(Mathf.Abs(newPos.x)<Mathf.Abs(newPos.y)){
+                if(Mathf.Abs(newPos.x)<1.5f){
+                    horizontalSection = 0;
+                }
+            }
+            newPos.x = horizontalSection*2.4f;
+            newPos.y = verticalSection*2.4f;
+            //Move position under cursor and start
+            touch.transform.position = newPos ;
+            touch.Play();
+            //convert mpStart to cursor position lockon
+            mpStart = newPos -=new Vector3(-5.3f,-3,-4f);
+            mpStart.x/=10.6f;
+            mpStart.y/=6;
+            mpStart*=res;
+        }
+        if(isClicked){
+            mpStop= Input.mousePosition;
+            if(Vector3.Distance(mpStart,mpStop)>500){
+                Vector2 direction = mpStart - mpStop;
+                if(Mathf.Abs(direction.y)>Mathf.Abs(direction.x)){
+                    if(direction.y<0){
+                        //bottom
+                        if(horizontalSection<0){
+                            dir = 5;
+                        }else if(horizontalSection>0){
+                            dir = 4;
+                        }else{
+                            dir = 0;
+                        }
+                    }else{
+                        //up
+                        if(horizontalSection<0){
+                            dir = 4;
+                        }else if(horizontalSection>0){
+                            dir = 5;
+                        }else{
+                            dir = 1;
+                        }
+                    }
+                }else{
+                    if(direction.x<0){
+                        //left
+                        if(verticalSection<0){
+                            dir = 4;
+                        }else if(verticalSection>0){
+                            dir = 5;
+                        }else{
+                            dir = 2;
+                        }
+                    }else{
+                        //right
+                        if(verticalSection<0){
+                            dir = 5;
+                        }else if(verticalSection>0){
+                            dir = 4;
+                        }else{
+                            dir = 3;
+                        }
+                    }
+                }
+            }
+            if(Input.GetMouseButtonUp(0)){
+                //On release stop the touch feedback
+                touch.Stop();
+                isClicked = false;
+                arrow.gameObject.SetActive(false);
+                clockwise.gameObject.SetActive(false);
+                //Return final direction
+                return dir;
+            }
+            switch(dir){
+                case 0: arrow.gameObject.SetActive(true);clockwise.gameObject.SetActive(false);arrow.rotation = Quaternion.Euler(0,0,90);break;
+                case 1: arrow.gameObject.SetActive(true);clockwise.gameObject.SetActive(false);arrow.rotation = Quaternion.Euler(0,0,270);break;
+                case 2: arrow.gameObject.SetActive(true);clockwise.gameObject.SetActive(false);arrow.rotation = Quaternion.Euler(0,0,0);break;
+                case 3: arrow.gameObject.SetActive(true);clockwise.gameObject.SetActive(false);arrow.rotation = Quaternion.Euler(0,0,180);break;
+                case 4: arrow.gameObject.SetActive(false);clockwise.gameObject.SetActive(true);clockwise.localScale = new Vector3(-2,2,0);break;
+                case 5: arrow.gameObject.SetActive(false);clockwise.gameObject.SetActive(true);clockwise.localScale = new Vector3(2,2,0);break;
+                default:arrow.gameObject.SetActive(false);clockwise.gameObject.SetActive(false);break;
+            }
+        }
+        return -1;
+        /*
         if(Input.GetMouseButtonDown(0)){
             //On click down get start position ans move touch feedback
             mpStart= Input.mousePosition;
@@ -146,6 +251,7 @@ public class FlipCube : MonoBehaviour
             mpStop= Input.mousePosition;
             if(Vector3.Distance(mpStart,mpStop)>200){
                 Vector2 direction = mpStart - mpStop;
+                Debug.Log(mpStart);
                 //Diag
                 if(Mathf.Abs(Mathf.Abs(direction.x)-Mathf.Abs(direction.y))<= 150){
                     if(direction.x<0){
@@ -204,8 +310,9 @@ public class FlipCube : MonoBehaviour
             }
 
         }
-        //Return no direction if there is no click
         return -1;
+        */
+        //Return no direction if there is no click
     }
     void FixedUpdate() {
         //Rotate the cube toward the target direction
@@ -217,7 +324,7 @@ public class FlipCube : MonoBehaviour
         //Set the target rotation to start the fixed update rotation
         isRotating = true;
         isAbleToRotate = false;
-        if(Stat.incrementNumberOfMoves()==50){
+        if(Stat.incrementNumberOfMoves()==35){
             UIManager.showStuckText();
         }
         targetRot+= rot;
